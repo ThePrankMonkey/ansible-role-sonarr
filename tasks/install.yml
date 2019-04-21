@@ -1,0 +1,38 @@
+---
+# tasks file for sonarr :: install
+- debug:
+    msg:
+      - "###########################"
+      - "##                       ##"
+      - "##   sonarr -- install   ##"
+      - "##                       ##"
+      - "###########################"
+- name: Download Sonarr
+  get_url:
+    url: "{{ sonarr_url }}"
+    dest: /tmp/sonarr.tar.gz
+  notify: empty_/opt/NzbDrone
+- meta: flush_handlers
+- name: Extract sonarr.tar.gz
+  unarchive:
+    src: /tmp/sonarr.tar.gz
+    dest: /opt
+    remote_src: yes
+    creates: /opt/NzbDrone/NzbDrone.exe
+- name: Set owner on sonarr folder
+  file:
+    path: /opt/NzbDrone
+    owner: sonarr
+    group: sonarr
+    state: directory
+    recurse: yes
+- name: Add SystemD Unit File
+  copy:
+    src: sonarr.service
+    dest: /etc/systemd/system/sonarr.service
+- name: Start sonarr Service
+  systemd:
+    name: sonarr
+    state: started
+    enabled: yes
+    daemon_reload: yes

@@ -1,0 +1,24 @@
+---
+# tasks file for sonarr :: network
+- debug:
+    msg:
+      - "###########################"
+      - "##                       ##"
+      - "##   sonarr -- network   ##"
+      - "##                       ##"
+      - "###########################"
+- name: Add Firewall File for Sonarr
+  copy:
+    src: sonarr.xml
+    dest: /etc/firewalld/services/sonarr.xml
+  notify: reload_firewalld
+- name: Ensure FirewallD is Running
+  systemd:
+    name: firewalld
+    state: started
+- name: Open FirewallD Port
+  firewalld:
+    service: sonarr
+    immediate: yes
+    permanent: yes
+    state: enabled

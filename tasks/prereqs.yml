@@ -1,0 +1,76 @@
+---
+# tasks file for sonarr :: prereqs
+- debug:
+    msg:
+      - "###########################"
+      - "##                       ##"
+      - "##   sonarr -- prereqs   ##"
+      - "##                       ##"
+      - "###########################"
+- name: Install Epel Release
+  yum:
+    name: epel-release
+    state: present
+- name: Import Mono Repo Key
+  rpm_key:
+    key: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+    state: present
+- name: Add Mono Repo
+  yum_repository:
+    name: mono-centos7-stable
+    file: mono-centos7-stable
+    description: Repo for Mono
+    baseurl: https://download.mono-project.com/repo/centos7-stable/
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: https://download.mono-project.com/repo/xamarin.gpg
+- name: Add ghettoforge Repo
+  yum_repository:
+    name: ghettoforge
+    file: ghettoforge
+    description: ghettoforge Repo for unrar
+    baseurl: http://mirror.ghettoforge.org/distributions/gf/el/7/gf/x86_64/
+    enabled: yes
+    gpgcheck: no
+- name: Install additional packages
+  yum:
+    name:
+      - mediainfo
+      - curl
+      - mono-core
+      - mono-devel
+      - mono-locale-extras
+      - wget
+      - libzen
+      - libmediainfo
+      - gettext
+      - sqlite.x86_64
+      - git
+      - yum-utils
+    state: present
+- name: Install packages for file handling
+  yum:
+    name:
+      - par2cmdline
+      - p7zip
+      - unrar
+      - unzip
+      - tar
+      - gcc
+      - python-feedparser
+      - python-configobj
+      - python-cheetah
+      - python-dbus
+      - python-devel
+      - libxslt-devel
+    state: present
+- name: Add sonarr group
+  group:
+    name: sonarr
+    state: present
+- name: Add sonarr user
+  user:
+    name: sonarr
+    group: sonarr
+    shell: /sbin/nologin
+    state: present
